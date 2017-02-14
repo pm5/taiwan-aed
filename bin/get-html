@@ -4,7 +4,14 @@ import requests
 import re
 import os
 import time
+import logging
 from lxml import html, etree
+
+logger = logging.getLogger()
+handler = logging.StreamHandler()
+handler.setFormatter(logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s'))
+logger.addHandler(handler)
+logger.setLevel(logging.INFO)
 
 list_url = 'http://tw-aed.mohw.gov.tw/SearchPlace.jsp?Action=Search&intPage={page_num}'
 details_url = 'http://tw-aed.mohw.gov.tw/ShowPlace.jsp?PlaceID={place_id}'
@@ -62,6 +69,7 @@ def main():
         for place_id in r['ids']:
             time.sleep(1)
             save_html(place_id)
+            logger.info('{place_id} saved'.format(place_id=place_id))
         page_num = int(r['counter']['current']) + 1
 
 if __name__ == "__main__":
