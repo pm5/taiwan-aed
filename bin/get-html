@@ -45,7 +45,7 @@ def main(*place_ids):
             if list_r['counter']['current'] == list_r['counter']['total']:
                 logger.info('list pages end at {page_num}. stopped'.format(page_num=page_num))
                 return
-            page_num = int(r['counter']['current']) + 1
+            page_num = int(list_r['counter']['current']) + 1
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
