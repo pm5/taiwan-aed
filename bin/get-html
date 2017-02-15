@@ -1,11 +1,9 @@
 #!/usr/bin/env python
 
-import requests
-import re
-import os
+import sys
 import time
 import logging
-from lxml import html, etree
+from crawler.html import save_html, get_ids_in_list
 
 logger = logging.getLogger()
 handler = logging.StreamHandler()
@@ -13,64 +11,44 @@ handler.setFormatter(logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s 
 logger.addHandler(handler)
 logger.setLevel(logging.INFO)
 
-list_url = 'http://tw-aed.mohw.gov.tw/SearchPlace.jsp?Action=Search&intPage={page_num}'
-details_url = 'http://tw-aed.mohw.gov.tw/ShowPlace.jsp?PlaceID={place_id}'
-tmp_filename = './tmp/{place_id}.html'
-
-def parse_page_counter(page_counter):
-    """
-    Get page counter information.
-    """
-    page_counter_text = page_counter.findtext('.//font')
-    r = re.match('當前第(\d+)頁/共(\d+)頁', page_counter_text)
-    return { 'current': r.group(1), 'total': r.group(2) }
-
-def parse_place_id(result):
-    """
-    Get ID from result.
-    """
-    return result.findtext('.//div')
-
-def get_ids_in_list(page_num):
-    """
-    Get a list of IDs in the list page.
-    """
-    r = requests.get(list_url.format(page_num=page_num))
-    if r.status_code != requests.codes.ok:
-        r.raise_for_status()
-    tree = html.fromstring(r.content)
-
-    results_list, page_counter = tree.xpath('//table')[1:3]
-
-    return {
-        'counter':parse_page_counter(page_counter),
-        'ids': [ parse_place_id(result)
-            for result in results_list.xpath('./tr')[1:] ],
-    }
-
-def save_html(place_id):
-    """
-    Save HTML of the ith entry.
-    """
-    r = requests.get(details_url.format(place_id=place_id))
-    if r.status_code != requests.codes.ok:
-        r.raise_for_status()
-    tree = html.fromstring(r.content.decode('utf-8'))
-    with open(tmp_filename.format(place_id=place_id), 'w') as f:
-        f.write(etree.tostring(tree.xpath('//div[@class="content2"]')[0], encoding='unicode'))
-
-def main():
-    page_num = 1
-    while True:
-        time.sleep(1)
-        r = get_ids_in_list(page_num)
-        if r['counter']['current'] == r['counter']['total']:
-            return
-        for place_id in r['ids']:
-            time.sleep(1)
-            save_html(place_id)
-            logger.info('{place_id} saved'.format(place_id=place_id))
-        page_num = int(r['counter']['current']) + 1
+def main(*place_ids):
+    if len(place_ids) > 0:
+        for place_id in place_ids:
+            try:
+                size = save_html(place_id)
+                logger.info('item {place_id} saved'.format(place_id=place_id))
+                if size > 0:
+                    time.sleep(1)
+            except:
+                logger.warn('error on item {place_id}, not saved'.format(place_id=place_id))
+    else:
+        page_num = 1
+        while True:
+            try:
+                list_r = get_ids_in_list(page_num)
+                logger.info('list page {page_counter} got {number} items'.format(page_counter=list_r['counter']['current'], number=len(list_r['ids'])))
+                time.sleep(1)
+            except:
+                logger.warn('error on page {page_num}. skipped'.format(page_num=page_num))
+                page_num = page_num + 1
+                continue
+            for place_id in list_r['ids']:
+                try:
+                    size = save_html(place_id)
+                    if size > 0:
+                        logger.info('item {place_id} saved'.format(place_id=place_id))
+                        time.sleep(1)
+                    else:
+                        logger.info('item {place_id} exists. skipped'.format(place_id=place_id))
+                except:
+                    logger.warn('error on item {place_id}. not saved'.format(place_id=place_id))
+            if list_r['counter']['current'] == list_r['counter']['total']:
+                logger.info('list pages end at {page_num}. stopped'.format(page_num=page_num))
+                return
+            page_num = int(r['counter']['current']) + 1
 
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) > 1:
+        main(*sys.argv[1:])
+    else:
+        main()

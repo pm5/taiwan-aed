@@ -13,6 +13,7 @@ $ bin/get-data      # extracts JSON in data/
 $ bin/publish-data  # publish JSON in data/ to remote data branch
 ```
 
-To do
+Notes
 -----
 
+* 503 error on items: 2610
