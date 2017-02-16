@@ -16,14 +16,20 @@ def main():
         call(['git', 'pull']);
         os.chdir('..')
     else:
-        call(['git', 'clone', REPO, '-b', 'data', PUBLISH_DIR])
+        r = call(['git', 'clone', REPO, '-b', 'data', PUBLISH_DIR])
+        if r == 128:
+            call(['git', 'clone', REPO, PUBLISH_DIR])
+            os.chdir(PUBLISH_DIR)
+            call(['git', 'checkout', '--orphan', 'data'])
+            call(['git', 'rm', '-rf', '.'])
+            os.chdir('..')
 
-    call(['rsync', '-a', '--include=*.json', 'data/', PUBLISH_DIR])
+    call(['rsync', '-a', '--include=*.json', '--exclude=.*', 'data/', PUBLISH_DIR])
 
     os.chdir(PUBLISH_DIR)
     call(['git', 'add', '-A', '.'])
     call(['git', 'commit', '-m', 'Published'])
-    call(['git', 'push'])
+    call(['git', 'push', '-u', 'origin', 'data'])
 
 if __name__ == "__main__":
     main()
