@@ -7,6 +7,7 @@ import os
 
 list_url = 'http://tw-aed.mohw.gov.tw/SearchPlace.jsp?Action=Search&intPage={page_num}'
 details_url = 'http://tw-aed.mohw.gov.tw/ShowPlace.jsp?PlaceID={place_id}'
+tmp_dir = './tmp'
 tmp_filename = './tmp/{place_id}.html'
 
 
@@ -57,3 +58,18 @@ def parse_place_id(result):
     Get ID from result.
     """
     return result.findtext('.//div')
+
+
+def read_html(place_id):
+    with open(tmp_filename.format(place_id=place_id), 'r') as f:
+        return f.read()
+
+
+def tree_html(place_id):
+    return html.fromstring(read_html(place_id))
+
+
+def all_ids():
+    return [
+        place_id.replace('.html', '') for place_id in os.listdir(tmp_dir) if place_id.find('.html') > -1
+    ]
