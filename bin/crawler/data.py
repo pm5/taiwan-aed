@@ -22,6 +22,7 @@ def parse_row(row):
             }
     elif name.find("網址") > -1:
         value = row.find('./td/a').get('href')
+        value = '' if value == 'http://' else value
     return (name, value)
 
 
