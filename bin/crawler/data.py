@@ -60,7 +60,11 @@ def save_json(place_id):
         f.write(get_json(place_id))
 
 
-def save_all_json():
+def save_all_json(logger):
     for place_id in all_ids():
-        print(place_id)
-        save_json(place_id)
+        try:
+            print(place_id)
+            save_json(place_id)
+        except:
+            logger.warn('extract {place_id} failed. skipped.'.format(
+                place_id=place_id))
