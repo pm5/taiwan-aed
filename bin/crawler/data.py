@@ -41,7 +41,12 @@ def parse_aed(aed_tree):
 def get_data(place_id):
     tree = tree_html(place_id)
     tables = tree.xpath('//table[@id="Ntable"]')
-    place, aed = tables[0], tables[2]
+    if len(tables) == 4:
+        place, aed = tables[0], tables[2]
+    elif len(tables) == 2:
+        place, aed = tables
+    else:
+        raise Exception('Unexpected number of tables')
     return {
         "place": parse_place(place),
         "aed": parse_aed(aed),

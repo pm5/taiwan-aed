@@ -18,9 +18,10 @@ def do_on_many(place_ids):
         try:
             save_json(place_id)
             logger.info('item {place_id} saved'.format(place_id=place_id))
-        except:
+        except Exception as e:
             logger.warn('extract item {place_id} failed. skipped.'.format(
                 place_id=place_id))
+            logger.debug('failure: {message}'.format(message=e))
 
 def main(*place_ids):
     if len(place_ids) > 0:
