@@ -29,7 +29,7 @@ def main():
     os.chdir(PUBLISH_DIR)
     call(['git', 'add', '-A', '.'])
     call(['git', 'commit', '-m', 'Published'])
-    # call(['git', 'push', '-u', 'origin', 'data'])
+    call(['git', 'push', '-u', 'origin', 'data'])
 
 if __name__ == "__main__":
     main()
