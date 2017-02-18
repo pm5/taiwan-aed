@@ -1,33 +1,27 @@
 #!/usr/bin/env python
 
 import sys
-from crawler.data import print_data, all_ids, save_json
-import logging
+from crawler.html import get_all_saved_ids
+from crawler.data import save_json
+from crawler.process import do_some, do_batch
 
-logger = logging.getLogger()
-handler = logging.StreamHandler()
-handler.setFormatter(logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s'))
-logger.addHandler(handler)
-logger.setLevel(logging.INFO)
+def save_by_id(id):
+    save_json(id)
 
-def do_on_all():
-    do_on_many(all_ids())
+def save_success(_):
+    return True
 
-def do_on_many(place_ids):
-    for place_id in place_ids:
-        try:
-            save_json(place_id)
-            logger.info('item {place_id} saved'.format(place_id=place_id))
-        except Exception as e:
-            logger.warn('extract item {place_id} failed. skipped.'.format(
-                place_id=place_id))
-            logger.debug('failure: {message}'.format(message=e))
-
-def main(*place_ids):
+def main(place_ids = []):
     if len(place_ids) > 0:
-        do_on_many(place_ids)
+        do_some(place_ids, save_by_id, save_success,
+                updated_message='item {item} saved',
+                failed_message='extract information from {item} failed. skipped',
+                sleep_sec=0)
     else:
-        do_on_all()
+        do_some(get_all_saved_ids(), save_by_id, save_success,
+                updated_message='item {item} saved',
+                failed_message='extract information from {item} failed. skipped',
+                sleep_sec=0)
 
 if __name__ == "__main__":
-    main(*sys.argv[1:])
+    main(sys.argv[1:])

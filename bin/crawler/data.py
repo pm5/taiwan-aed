@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from .html import tree_html, all_ids
+from .html import tree_html
 import re
 import json
 

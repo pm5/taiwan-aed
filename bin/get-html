@@ -1,54 +1,27 @@
 #!/usr/bin/env python
 
 import sys
-import time
-import logging
-from crawler.html import save_html, get_ids_in_list
+from crawler.html import paginate, save_html
+from crawler.process import do_some, do_batch
 
-logger = logging.getLogger()
-handler = logging.StreamHandler()
-handler.setFormatter(logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s'))
-logger.addHandler(handler)
-logger.setLevel(logging.INFO)
+def get_by_id(id):
+    size = save_html(id)
+    return size
 
-def main(*place_ids):
+def get_success(size):
+    return size > 0
+
+def main(place_ids = []):
     if len(place_ids) > 0:
-        for place_id in place_ids:
-            try:
-                size = save_html(place_id)
-                logger.info('item {place_id} saved'.format(place_id=place_id))
-                if size > 0:
-                    time.sleep(1)
-            except:
-                logger.warn('error on item {place_id}, not saved'.format(place_id=place_id))
+        do_some(place_ids, get_by_id, get_success,
+                updated_message='item {item} saved',
+                nochange_message='item {item} exists. skipped',
+                failed_message='error on item {item}, not saved')
     else:
-        page_num = 1
-        while True:
-            try:
-                list_r = get_ids_in_list(page_num)
-                logger.info('list page {page_counter} got {number} items'.format(page_counter=list_r['counter']['current'], number=len(list_r['ids'])))
-                time.sleep(1)
-            except:
-                logger.warn('error on page {page_num}. skipped'.format(page_num=page_num))
-                page_num = page_num + 1
-                continue
-            for place_id in list_r['ids']:
-                try:
-                    size = save_html(place_id)
-                    if size > 0:
-                        logger.info('item {place_id} saved'.format(place_id=place_id))
-                        time.sleep(1)
-                    else:
-                        logger.info('item {place_id} exists. skipped'.format(place_id=place_id))
-                except:
-                    logger.warn('error on item {place_id}. not saved'.format(place_id=place_id))
-            if list_r['counter']['current'] == list_r['counter']['total']:
-                logger.info('list pages end at {page_num}. stopped'.format(page_num=page_num))
-                return
-            page_num = int(list_r['counter']['current']) + 1
+        do_batch(paginate(), get_by_id, get_success,
+                updated_message='item {item} saved',
+                nochange_message='item {item} exists. skipped',
+                failed_message='error on item {item}, not saved')
 
 if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        main(*sys.argv[1:])
-    else:
-        main()
+    main(sys.argv[1:])

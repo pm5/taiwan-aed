@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from .logging import default_logger
 import requests
 from lxml import html, etree
 import re
@@ -61,15 +62,48 @@ def parse_place_id(result):
 
 
 def read_html(place_id):
+    """
+    Get the text content of the item.
+    """
     with open(tmp_filename.format(place_id=place_id), 'r') as f:
         return f.read()
 
 
 def tree_html(place_id):
+    """
+    Get an HTML tree of the item.
+    """
     return html.fromstring(read_html(place_id))
 
 
-def all_ids():
+def get_all_saved_ids():
+    """
+    Get a list of all item IDs that are saved.
+    """
     return [
         place_id.replace('.html', '') for place_id in os.listdir(tmp_dir) if place_id.find('.html') > -1
     ]
+
+
+def paginate(logger=default_logger):
+    """
+    Get an iterator of the entry IDs on each page.
+    """
+    page_num = 1
+    while True:
+        try:
+            list_r = get_ids_in_list(page_num)
+            logger.info('list page {page_counter} got {number} items'.format(
+                page_counter=list_r['counter']['current'], number=len(list_r['ids'])))
+        except Exception as e:
+            logger.warn('error on page {page_num}. skipped'.format(
+                page_num=page_num))
+            logger.debug(e)
+            page_num = page_num + 1
+            continue
+        yield list_r['ids']
+        if list_r['counter']['current'] == list_r['counter']['total']:
+            logger.info('list pages end at {page_num}. stopped'.format(
+                page_num=page_num))
+            return
+        page_num = int(list_r['counter']['current']) + 1
