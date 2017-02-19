@@ -59,7 +59,7 @@ def print_data(place_id):
 
 
 def get_json(place_id):
-    return json.dumps(get_data(place_id), ensure_ascii=False)
+    return json.dumps(get_data(place_id), ensure_ascii=False, sort_keys=True, separators=(',', ':'))
 
 
 def save_json(place_id):
