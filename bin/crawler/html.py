@@ -76,9 +76,9 @@ def tree_html(place_id):
     return html.fromstring(read_html(place_id))
 
 
-def get_all_saved_ids():
+def get_all_html_ids():
     """
-    Get a list of all item IDs that are saved.
+    Get a list of all item IDs that are grabbed.
     """
     return [
         place_id.replace('.html', '') for place_id in os.listdir(tmp_dir) if place_id.find('.html') > -1

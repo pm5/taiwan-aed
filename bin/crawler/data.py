@@ -3,6 +3,7 @@
 from .html import tree_html
 import re
 import json
+from os import listdir
 
 data_dir = './data'
 data_filename = './data/{place_id}.json'
@@ -64,3 +65,12 @@ def get_json(place_id):
 def save_json(place_id):
     with open(data_filename.format(place_id=place_id), 'w') as f:
         f.write(get_json(place_id))
+
+
+def get_all_saved_ids():
+    """
+    Get a list of all item IDs that are saved.
+    """
+    return [
+        place_id.replace('.json', '') for place_id in listdir(data_dir) if place_id.find('.json') > -1
+    ]
