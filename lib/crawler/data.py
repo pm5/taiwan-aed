@@ -39,7 +39,7 @@ def parse_aed(aed_tree):
     return aed
 
 
-def get_data(place_id):
+def parse_data(place_id):
     tree = tree_html(place_id)
     tables = tree.xpath('//table[@id="Ntable"]')
     if len(tables) == 4:
@@ -55,11 +55,11 @@ def get_data(place_id):
 
 
 def print_data(place_id):
-    print(get_data(place_id))
+    print(parse_data(place_id))
 
 
 def get_json(place_id):
-    return json.dumps(get_data(place_id), ensure_ascii=False, sort_keys=True, separators=(',', ':'))
+    return json.dumps(parse_data(place_id), ensure_ascii=False, sort_keys=True, separators=(',', ':'))
 
 
 def save_json(place_id, force=False):
@@ -68,11 +68,15 @@ def save_json(place_id, force=False):
     with open(data_filename.format(place_id=place_id), 'w') as f:
         return f.write(get_json(place_id))
 
+def get_data(place_id):
+    with open(data_filename.format(place_id=place_id), 'r') as f:
+        return json.loads(f.read())
+
 
 def get_all_saved_ids():
     """
     Get a list of all item IDs that are saved.
     """
     return [
-        place_id.replace('.json', '') for place_id in listdir(data_dir) if place_id.find('.json') > -1
+        place_id.replace('.json', '') for place_id in os.listdir(data_dir) if place_id.find('.json') > -1
     ]
