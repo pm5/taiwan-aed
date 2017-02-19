@@ -3,7 +3,7 @@
 from .html import tree_html
 import re
 import json
-from os import listdir
+import os
 
 data_dir = './data'
 data_filename = './data/{place_id}.json'
@@ -62,9 +62,11 @@ def get_json(place_id):
     return json.dumps(get_data(place_id), ensure_ascii=False, sort_keys=True, separators=(',', ':'))
 
 
-def save_json(place_id):
+def save_json(place_id, force=False):
+    if not force and os.access(data_filename.format(place_id=place_id), os.R_OK):
+        return -1
     with open(data_filename.format(place_id=place_id), 'w') as f:
-        f.write(get_json(place_id))
+        return f.write(get_json(place_id))
 
 
 def get_all_saved_ids():
