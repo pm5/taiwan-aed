@@ -16,4 +16,9 @@ $ bin/publish-data  # publish JSON in data/ to remote data branch
 Notes
 -----
 
-* 503 error on items: 2610
+* items that return error
+  - 2610 at [page 105](http://tw-aed.mohw.gov.tw/SearchPlace.jsp?Action=Search&City=&Area=&Type=&PlaceType=&Key=&intPage=105)
+  - 2790 at [page 113](http://tw-aed.mohw.gov.tw/SearchPlace.jsp?Action=Search&City=&Area=&Type=&PlaceType=&Key=&intPage=113)
+  - 5924 at [page 252](http://tw-aed.mohw.gov.tw/SearchPlace.jsp?Action=Search&City=&Area=&Type=&PlaceType=&Key=&intPage=252)
+  - 7643 at [page 324](http://tw-aed.mohw.gov.tw/SearchPlace.jsp?Action=Search&City=&Area=&Type=&PlaceType=&Key=&intPage=252)
+  - 8500 at [page 360](http://tw-aed.mohw.gov.tw/SearchPlace.jsp?Action=Search&City=&Area=&Type=&PlaceType=&Key=&intPage=360)
