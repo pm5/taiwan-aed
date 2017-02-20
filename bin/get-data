@@ -9,26 +9,24 @@ from crawler.html import get_all_html_ids
 from crawler.data import save_json
 from crawler.process import do_some, do_batch
 
-def save_by_id(args):
-    def save_json_by_id(id):
-        size = save_json(id)
+def save_json_by_id(args):
+    def save(id):
+        size = save_json(id, force=args.force)
         return size
-    def force_save_json_by_id(id):
-        return save_json(id, force=True)
-    return save_json_by_id if not args.force else force_save_json_by_id
+    return save
 
-def save_success(r):
+def save_json_success(r):
     return r > 0
 
 def main(args):
     if len(args.place_ids) > 0:
-        do_some(args.place_ids, save_by_id(args), save_success,
+        do_some(args.place_ids, save_json_by_id(args), save_json_success,
                 updated_message='item {item} saved',
                 nochange_message='item {item} exists. skipped',
                 failed_message='extract information from {item} failed. skipped',
                 sleep_sec=0)
     else:
-        do_some(get_all_html_ids(), save_by_id(args), save_success,
+        do_some(get_all_html_ids(), save_json_by_id(args), save_json_success,
                 updated_message='item {item} saved',
                 nochange_message='item {item} exists. skipped',
                 failed_message='extract information from {item} failed. skipped',

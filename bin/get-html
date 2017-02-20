@@ -8,25 +8,23 @@ sys.path.append(os.path.join(os.curdir, 'lib'))
 from crawler.html import paginate, save_html
 from crawler.process import do_some, do_batch
 
-def get_by_id(args):
-    def save_html_by_id(id):
-        size = save_html(id)
+def save_html_by_id(args):
+    def save(id):
+        size = save_html(id, force=args.force)
         return size
-    def force_save_htmL_by_id(id):
-        return save_html(id, force=True)
-    return save_html_by_id if not args.force else force_save_html_by_id
+    return save
 
 def get_success(size):
     return size > 0
 
 def main(args):
     if len(args.place_ids) > 0:
-        do_some(args.place_ids, get_by_id(args), get_success,
+        do_some(args.place_ids, save_html_by_id(args), get_success,
                 updated_message='item {item} saved',
                 nochange_message='item {item} exists. skipped',
                 failed_message='error on item {item}, not saved')
     else:
-        do_batch(paginate(), get_by_id(args), get_success,
+        do_batch(paginate(), save_html_by_id(args), get_success,
                 updated_message='item {item} saved',
                 nochange_message='item {item} exists. skipped',
                 failed_message='error on item {item}, not saved')
