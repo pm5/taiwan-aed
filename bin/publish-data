@@ -31,7 +31,7 @@ def main():
 
     for place_id in get_all_saved_ids():
         copy('{data_dir}/{place_id}.json'.format(data_dir=data_dir, place_id=place_id), publish_dir)
-    copy('{data_dir}/data.csv', publish_dir)
+    copy('{data_dir}/data.csv'.format(data_dir=data_dir), publish_dir)
 
     chdir(publish_dir)
     call(['git', 'add', '-A', '.'])
