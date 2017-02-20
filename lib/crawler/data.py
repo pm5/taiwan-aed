@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from .html import tree_html
+from .logging import default_logger as logger
 import re
 import json
 import csv
@@ -16,13 +17,17 @@ def parse_field(field):
     value = field.find('./td').text_content().strip()
 
     if name.find('經緯度') > -1:
-        lonlat_r = re.compile(r'([\d\.]+),([\d\.]+)')
+        lonlat_r = re.compile(r'(\d+\.\d+),\s*(\d+\.\d+)')
         r = lonlat_r.search(value)
         if r:
             value = {
                 'x': float(r.group(1)),
                 'y': float(r.group(2)),
             }
+        else:
+            logger.warn(
+                'latlon field "{name}" convertion failed. unchanged.'.format(name=name))
+            logger.debug(value)
     elif name.find('網址') > -1:
         value = field.find('./td/a').get('href')
         value = '' if value == 'http://' else value
