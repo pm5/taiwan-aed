@@ -6,8 +6,8 @@ import argparse
 
 sys.path.append(os.path.join(os.curdir, 'lib'))
 from crawler.html import get_all_html_ids
-from crawler.data import save_json
-from crawler.process import do_some, do_batch
+from crawler.data import save_json, get_csv, save_csv
+from crawler.process import do_some, do_batch, do_collect
 
 def save_json_by_id(args):
     def save(id):
@@ -18,6 +18,8 @@ def save_json_by_id(args):
 def save_json_success(r):
     return r > 0
 
+def yes(_): return True
+
 def main(args):
     if len(args.place_ids) > 0:
         do_some(args.place_ids, save_json_by_id(args), save_json_success,
@@ -25,10 +27,16 @@ def main(args):
                 nochange_message='item {item} exists. skipped',
                 failed_message='extract information from {item} failed. skipped',
                 sleep_sec=0)
+        do_collect(args.place_ids, get_csv, yes, save_csv,
+                failed_message='extract information from {item} failed. skipped',
+                sleep_sec=0)
     else:
         do_some(get_all_html_ids(), save_json_by_id(args), save_json_success,
                 updated_message='item {item} saved',
                 nochange_message='item {item} exists. skipped',
+                failed_message='extract information from {item} failed. skipped',
+                sleep_sec=0)
+        do_collect(get_all_html_ids(), get_csv, yes, save_csv,
                 failed_message='extract information from {item} failed. skipped',
                 sleep_sec=0)
 
