@@ -5,7 +5,7 @@ import time
 
 
 def do_some(data, task, updated,
-            sleep_sec=1,
+            sleep_sec=0,
             updated_message=None,
             nochange_message=None,
             failed_message='{item} failed',
@@ -30,7 +30,7 @@ def do_some(data, task, updated,
 
 
 def do_batch(paginate, task, updated,
-             sleep_sec=1,
+             sleep_sec=0,
              updated_message=None,
              nochange_message=None,
              failed_message='{item} failed',
@@ -46,12 +46,13 @@ def do_batch(paginate, task, updated,
 
 
 def do_collect(data, task, updated, collect,
-               sleep_sec=1,
+               sleep_sec=0,
                updated_message=None,
                nochange_message=None,
                failed_message='{item} failed',
                logger=default_logger):
     results = []
+
     def save_updated(r):
         if updated(r):
             results.append(r)
@@ -59,7 +60,6 @@ def do_collect(data, task, updated, collect,
         else:
             return False
     count = do_some(data, task, save_updated, sleep_sec,
-            updated_message, nochange_message, failed_message, logger)
+                    updated_message, nochange_message, failed_message, logger)
     collect(results)
     return count
-

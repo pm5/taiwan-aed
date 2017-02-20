@@ -25,20 +25,16 @@ def main(args):
         do_some(args.place_ids, save_json_by_id(args), save_json_success,
                 updated_message='item {item} saved',
                 nochange_message='item {item} exists. skipped',
-                failed_message='extract information from {item} failed. skipped',
-                sleep_sec=0)
+                failed_message='extract information from {item} failed. skipped')
         do_collect(args.place_ids, get_csv, yes, save_csv,
-                failed_message='extract information from {item} failed. skipped',
-                sleep_sec=0)
+                failed_message='extract information from {item} failed. skipped')
     else:
         do_some(get_all_html_ids(), save_json_by_id(args), save_json_success,
                 updated_message='item {item} saved',
                 nochange_message='item {item} exists. skipped',
-                failed_message='extract information from {item} failed. skipped',
-                sleep_sec=0)
+                failed_message='extract information from {item} failed. skipped')
         do_collect(get_all_html_ids(), get_csv, yes, save_csv,
-                failed_message='extract information from {item} failed. skipped',
-                sleep_sec=0)
+                failed_message='extract information from {item} failed. skipped')
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(

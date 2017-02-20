@@ -22,12 +22,14 @@ def main(args):
         do_some(args.place_ids, save_html_by_id(args), get_success,
                 updated_message='item {item} saved',
                 nochange_message='item {item} exists. skipped',
-                failed_message='error on item {item}, not saved')
+                failed_message='error on item {item}, not saved',
+                sleep_sec=1)
     else:
         do_batch(paginate(), save_html_by_id(args), get_success,
                 updated_message='item {item} saved',
                 nochange_message='item {item} exists. skipped',
-                failed_message='error on item {item}, not saved')
+                failed_message='error on item {item}, not saved',
+                sleep_sec=1)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Crawl HTML')
