@@ -24,3 +24,8 @@ Notes
   - 8500 at [page 360](http://tw-aed.mohw.gov.tw/SearchPlace.jsp?Action=Search&City=&Area=&Type=&PlaceType=&Key=&intPage=360)
 * obviously wrong:
   - [680](http://tw-aed.mohw.gov.tw/ShowPlace.jsp?PlaceID=680) location
+
+To do
+-----
+
+* Define a better JSON format and generate `data.json` containing all items.
