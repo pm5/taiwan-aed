@@ -2,6 +2,8 @@
 衛生福利部公共場所 AED 急救資訊網
 =================================
 
+Note: MOHW has released the dataset with an open license [here](https://data.gov.tw/dataset/12063), updated monthly.
+
 <http://tw-aed.mohw.gov.tw/SearchPlace.jsp?Action=Search&City=&Area=&Type=&PlaceType=&Key=&intPage=260>
 
 Usage
