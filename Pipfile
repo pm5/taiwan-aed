@@ -8,7 +8,7 @@ name = "pypi"
 [packages]
 
 lxml = "==3.7.2"
-requests = "==2.13.0"
+requests = "==2.20.0"
 
 
 [dev-packages]
